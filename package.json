@@ -1,0 +1,11 @@
+{
+  "name": "the-manual-approach",
+  "description": "Sometimes you just need to avoid over-engineering things.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "mustache": "^2.3.2"
+  }
+}

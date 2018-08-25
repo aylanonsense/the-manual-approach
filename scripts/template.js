@@ -1,15 +1,4 @@
 const { render } = require('Mustache')
-const { readFileSync } = require('fs')
-
-module.exports.loadTemplate = templateName => {
-  try {
-    const templateFilePath = `templates/${templateName}.tpl`
-    console.log(`Loading ${templateFilePath}`)
-    return readFileSync(`${templateFilePath}`, 'utf8')
-  } catch (err) {
-    throw new Error(`Error loading template: ${err.message}`)
-  }
-}
 
 module.exports.createTemplateData = experiment => {
   console.log('Creating template data')

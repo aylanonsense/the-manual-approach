@@ -1,10 +1,5 @@
-let config
-
 try {
-  config = require('./config.json')
+  module.exports = require('./config.json')
 } catch (err) {
-  console.log('Please create a /config/config.json file based on /config/config.template.json')
-  config = {}
+  throw new Error('Please create a /config/config.json file based on /config/config.template.json')
 }
-
-module.exports = config

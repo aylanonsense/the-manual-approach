@@ -60,6 +60,5 @@ module.exports.printTemplateData = templateData => {
 }
 
 module.exports.execTemplate = (templateString, templateData) => {
-  console.log('Executing template')
   return render(templateString, templateData)
 }

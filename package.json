@@ -6,7 +6,9 @@
     "start": "node index.js"
   },
   "dependencies": {
+    "github-client": "^0.8.0",
     "mustache": "^2.3.2",
-    "pg": "^7.4.3"
+    "pg": "^7.4.3",
+    "simple-git": "^1.96.0"
   }
 }

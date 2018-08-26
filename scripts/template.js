@@ -1,4 +1,5 @@
 const { render } = require('Mustache')
+const { formatAsTable } = require('./util')
 
 module.exports.createTemplateData = experiment => {
   console.log('Creating template data')
@@ -29,15 +30,6 @@ module.exports.createTemplateData = experiment => {
     hasAttributes: attributes.length > 0,
     attributes
   }
-}
-
-const formatAsTable = tabularData => {
-  const maxColumnLengths = tabularData[0].map((x, col) => {
-    return tabularData.reduce((maxLength, row) => Math.max(maxLength, `${row[col]}`.length), 0)
-  })
-  return tabularData.map(row => {
-    return row.map((cell, col) => `${cell}`.padEnd(maxColumnLengths[col])).join('  ')
-  })
 }
 
 module.exports.printTemplateData = templateData => {

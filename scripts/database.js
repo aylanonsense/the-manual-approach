@@ -1,5 +1,6 @@
 const { readFileSync } = require('fs')
 const { Client } = require('pg')
+const { formatAsTable } = require('./util')
 
 module.exports.loadQuery = queryName => {
   try {
@@ -11,15 +12,26 @@ module.exports.loadQuery = queryName => {
   }
 }
 
-module.exports.runQuery = async (sql, reason) => {
-  console.log(`Running query to ${reason}`)
+module.exports.runQuery = async sql => {
+  console.log('Running query')
   const client = new Client()
-  await client.connect()
   try {
+    await client.connect()
     return await client.query(sql)
   } catch (err) {
     throw new Error(`Error executing query: ${err.message}`)
   } finally {
-    await client.end()
+    try {
+      await client.end()
+    } catch (err) {}
   }
+}
+
+module.exports.printQueryResponse = response => {
+  response.filter(result => result.command === 'SELECT')
+    .forEach(result => {
+      const fields = result.fields.map(field => field.name)
+      const rows = result.rows.map(row => fields.map(field => row[field]))
+      formatAsTable([ fields, ...rows ]).forEach(str => console.log(`    ${str}`))
+    })
 }

@@ -1,7 +1,7 @@
 const config = require('../config')
 const { loadExperiment, validateExperiment } = require('./experiment')
 const { createTemplateData, printTemplateData, execTemplate } = require('./template')
-const { loadQuery, runQuery } = require('./database')
+const { loadQuery, runQuery, printQueryResponse } = require('./database')
 const { createReviewBranch } = require('./github')
 
 module.exports = async experimentName => {
@@ -16,11 +16,14 @@ module.exports = async experimentName => {
   const insertExperimentSQL = execTemplate(insertExperimentTemplate, templateData)
 
   // Create the database tables
-  const createTablesSQL = loadQuery(config.createTablesSQLFile)
-  await runQuery(createTablesSQL, 'create tables')
+  await runQuery(loadQuery(config.resetTablesSQLFile))
 
-  // Test the query
-  await runQuery(insertExperimentSQL, 'insert experiment')
+  // Run the query
+  await runQuery(insertExperimentSQL)
+
+  // Show the results
+  const response = await runQuery(loadQuery(config.selectAllSQLFile))
+  printQueryResponse(response)
 
   // Build the finalized SQL query
   const finalSQL = execTemplate(insertExperimentTemplate, { ...templateData, useProductionValues: true })

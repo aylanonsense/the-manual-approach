@@ -1,3 +1,10 @@
 {
-  "sqlTemplateName": "some_template"
+  "commitRepoPath": "file/path/to/repo",
+  "commitFilePath": "./path/to/sql/file/{{ experimentName }}.sql",
+  "commitBranch": "some-branch-{{ experimentName }}",
+  "commitMessage": "Creating insert SQL for {{ experimentName }}",
+  "resetSQLFile": "reset",
+  "insertSQLFile": "insert",
+  "selectSQLFile": "select",
+  "allowPush": false
 }

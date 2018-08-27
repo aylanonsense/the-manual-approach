@@ -1,36 +1,39 @@
 const config = require('../config')
 const { loadExperiment, validateExperiment } = require('./experiment')
-const { createTemplateData, printTemplateData, execTemplate } = require('./template')
+const { createTemplateData, execTemplate } = require('./template')
 const { loadQuery, runQuery, printQueryResponse } = require('./database')
 const { createReviewBranch } = require('./github')
 
 module.exports = async experimentName => {
-  // Get data about the experiment
+  console.log('Loading experiment data')
   const experiment = loadExperiment(experimentName)
+
+  console.log('Validating experiment data')
   validateExperiment(experiment)
 
-  // Create the SQL query to insert
-  const insertExperimentTemplate = loadQuery(config.insertExperimentSQLFile)
-  const templateData = createTemplateData(experiment)
-  printTemplateData(templateData)
-  const insertExperimentSQL = execTemplate(insertExperimentTemplate, templateData)
+  console.log('Building SQL file')
+  const insertTemplate = loadQuery(config.insertSQLFile)
+  const templateData = createTemplateData(experimentName, experiment)
+  const insertSQL = execTemplate(insertTemplate, templateData)
 
-  // Create the database tables
-  await runQuery(loadQuery(config.resetTablesSQLFile))
+  console.log('Resetting database')
+  await runQuery(loadQuery(config.resetSQLFile))
 
-  // Run the query
-  await runQuery(insertExperimentSQL)
+  console.log('Running SQL query')
+  await runQuery(insertSQL)
+  const response = await runQuery(loadQuery(config.selectSQLFile))
+  printQueryResponse(response, '  ')
 
-  // Show the results
-  const response = await runQuery(loadQuery(config.selectAllSQLFile))
-  printQueryResponse(response)
-
-  // Build the finalized SQL query
-  const finalSQL = execTemplate(insertExperimentTemplate, { ...templateData, useProductionValues: true })
-
-  // Create a review
+  console.log('Creating review branch')
+  const finalSQL = execTemplate(insertTemplate, { ...templateData, useProductionValues: true })
   const commitFilePath = execTemplate(config.commitFilePath, { experimentName })
   const commitBranch = execTemplate(config.commitBranch, { experimentName })
   const commitMessage = execTemplate(config.commitMessage, { experimentName })
-  await createReviewBranch(config.commitRepoPath, commitFilePath, finalSQL, commitBranch, commitMessage)
+  await createReviewBranch(commitFilePath, finalSQL, config.commitRepoPath, commitBranch, commitMessage, config.allowPush)
+
+  console.log('Recommended pull request description:\n')
+
+  console.log(`SQL to insert new experiment for ${ experiment.ticket }`)
+  console.log('\nOutput from running locally:\n')
+  printQueryResponse(response, '')
 }

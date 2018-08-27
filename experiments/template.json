@@ -1,24 +1,24 @@
 {
-  "name": "experiment_name",
+  "ticket": "link-to-ticket",
   "variants": [
     {
       "name": "Control",
-      "percent": 0.25,
+      "weight": 0.25,
       "attributes": { "color": "red" }
     },
     {
       "name": "ControlPrime",
-      "percent": 0.25,
+      "weight": 0.250,
       "attributes": { "color": "yellow" }
     },
     {
       "name": "VariantName",
-      "percent": 0.25,
+      "weight": 0.25,
       "attributes": { "color": "blue" }
     },
     {
       "name": "AnotherVariantName",
-      "percent": 0.25,
+      "weight": 0.25,
       "attributes": { "color": "green" }
     }
   ]

@@ -3,17 +3,15 @@ const { Client } = require('pg')
 const { formatAsTable } = require('./util')
 
 module.exports.loadQuery = queryName => {
+  const templateFilePath = `queries/${queryName}.sql`
   try {
-    const templateFilePath = `queries/${queryName}.sql`
-    console.log(`Loading ${templateFilePath}`)
     return readFileSync(`${templateFilePath}`, 'utf8')
   } catch (err) {
-    throw new Error(`Error loading template: ${err.message}`)
+    throw new Error(`Error loading template from ${templateFilePath}: ${err.message}`)
   }
 }
 
 module.exports.runQuery = async sql => {
-  console.log('Running query')
   const client = new Client()
   try {
     await client.connect()
@@ -27,11 +25,13 @@ module.exports.runQuery = async sql => {
   }
 }
 
-module.exports.printQueryResponse = response => {
+module.exports.printQueryResponse = (response, indent='') => {
   response.filter(result => result.command === 'SELECT')
     .forEach(result => {
       const fields = result.fields.map(field => field.name)
       const rows = result.rows.map(row => fields.map(field => row[field]))
-      formatAsTable([ fields, ...rows ]).forEach(str => console.log(`    ${str}`))
+      formatAsTable([ fields.map(field => field.toUpperCase()), ...rows ])
+        .forEach(str => console.log(`${indent}${str}`))
+      console.log()
     })
 }

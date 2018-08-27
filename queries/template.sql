@@ -1,1 +1,1 @@
-Perform variable replacements like this: {{ experimentName }}
+SELECT * FROM {{ tableName }};

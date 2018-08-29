@@ -31,9 +31,11 @@ module.exports = async experimentName => {
   const commitMessage = execTemplate(config.commitMessage, { experimentName })
   await createReviewBranch(commitFilePath, finalSQL, config.commitRepoPath, commitBranch, commitMessage, config.allowPush)
 
-  console.log('Recommended pull request description:\n')
+  console.log('\n\nRecommended pull request description:')
 
   console.log(`SQL to insert new experiment for ${ experiment.ticket }`)
   console.log('\nOutput from running locally:\n')
+  console.log('\`\`\`')
   printQueryResponse(response, '')
+  console.log('\`\`\`')
 }

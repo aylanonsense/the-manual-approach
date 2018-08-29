@@ -28,10 +28,12 @@ module.exports.runQuery = async sql => {
 module.exports.printQueryResponse = (response, indent='') => {
   response.filter(result => result.command === 'SELECT')
     .forEach(result => {
-      const fields = result.fields.map(field => field.name)
-      const rows = result.rows.map(row => fields.map(field => row[field]))
-      formatAsTable([ fields.map(field => field.toUpperCase()), ...rows ])
-        .forEach(str => console.log(`${indent}${str}`))
-      console.log()
+      if (result.rows.length > 0) {
+        const fields = result.fields.map(field => field.name)
+        const rows = result.rows.map(row => fields.map(field => row[field]))
+        formatAsTable([ fields.map(field => field.toUpperCase()), ...rows ])
+          .forEach(str => console.log(`${indent}${str}`))
+        console.log()
+      }
     })
 }
